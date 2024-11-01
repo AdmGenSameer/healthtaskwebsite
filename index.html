@@ -87,51 +87,54 @@
     </footer>
 
     <div class="medical-dashboard">
-        <!-- ECG Monitor -->
-        <div class="ecg-container">
-            <div class="monitor-header">
-                <span class="monitor-label">ECG Lead II</span>
-                <span class="heart-rate">
-                    <span class="bpm-number">82</span>
-                    <span class="bpm-label">BPM</span>
-                </span>
-            </div>
-            <svg class="heartrate" viewBox="0 0 500 100"> <!-- Adjusted viewBox -->
-                <g class="ecg-lines">
-                    <path class="heartrate-line" d="M0,50 L100,50" stroke="#FF4B6E" stroke-width="2" fill="none" />
-                </g>
+        <div class="monitor-box ecg-container">
+          <div class="monitor-header">
+            <span class="monitor-label">ECG II</span>
+            <span class="heart-rate">
+              <span class="bpm-number">82</span>
+              <span class="bpm-label">BPM</span>
+            </span>
+          </div>
+          <div class="ecg-wrapper">
+            <svg class="heartrate" viewBox="0 0 500 100">
+              <defs>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <g class="grid"></g>
+              <g class="ecg-lines"></g>
             </svg>
-            <div class="ecg-grid"></div>
+          </div>
         </div>
-
-        <!-- Vital Signs -->
-        <div class="vitals-container">
-            <!-- Blood Pressure -->
-            <div class="vital-box bp-monitor">
-                <div class="vital-label">BP</div>
-                <div class="vital-numbers">
-                    <span class="systolic">120</span>
-                    <span class="separator">/</span>
-                    <span class="diastolic">80</span>
-                </div>
-                <div class="vital-unit">mmHg</div>
-            </div>
-
-            <!-- Oxygen Saturation -->
-            <div class="vital-box spo2-monitor">
-                <div class="vital-label">SpO₂</div>
-                <div class="vital-numbers">98</div>
-                <div class="vital-unit">%</div>
-            </div>
-
-            <!-- Temperature -->
-            <div class="vital-box temp-monitor">
-                <div class="vital-label">TEMP</div>
-                <div class="vital-numbers">37.2</div>
-                <div class="vital-unit">°C</div>
-            </div>
+      
+        <div class="monitor-box vital-box bp-monitor">
+          <div class="vital-label">BP</div>
+          <div class="vital-numbers">
+            <span class="systolic">120</span>
+            <span class="separator">/</span>
+            <span class="diastolic">80</span>
+          </div>
+          <div class="vital-unit">mmHg</div>
         </div>
-    </div>
+      
+        <div class="monitor-box vital-box spo2-monitor">
+          <div class="vital-label">SpO₂</div>
+          <div class="vital-numbers">98</div>
+          <div class="vital-unit">%</div>
+        </div>
+      
+        <div class="monitor-box vital-box temp-monitor">
+          <div class="vital-label">TEMP</div>
+          <div class="vital-numbers">37.2</div>
+          <div class="vital-unit">°C</div>
+        </div>
+      </div>
+    
     <script>
         // Three.js Background Animation
         const scene = new THREE.Scene();
@@ -173,70 +176,157 @@
             scene.add(particle);
         }
 
-        const ecgLines = document.querySelector('.ecg-lines');
-    let currentX = -500;
-    const animationSpeed = 4;
+        
+    
+    function createGrid() {
+    const grid = document.querySelector('.grid');
+    
+    for (let i = 0; i < 25; i++) {
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", i * 20);
+      line.setAttribute("y1", "0");
+      line.setAttribute("x2", i * 20);
+      line.setAttribute("y2", "100");
+      line.setAttribute("class", "grid-line");
+      grid.appendChild(line);
+    }
+    
+    for (let i = 0; i < 5; i++) {
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", "0");
+      line.setAttribute("y1", i * 25);
+      line.setAttribute("x2", "500");
+      line.setAttribute("y2", i * 25);
+      line.setAttribute("class", "grid-line");
+      grid.appendChild(line);
+    }
+  }
 
-    function animateECG() {
-        const normalLine = (x) => `L${x},50 `;
-        const heartBeat = (x) => `L${x},40 L${x+3},30 L${x+6},50 L${x+9},30 L${x+12},50 `;
-
-        let path = `M${currentX},50 `;
-        path += normalLine(currentX + 50);
-        path += heartBeat(currentX + 50);
-        path += normalLine(currentX + 100);
-        path += heartBeat(currentX + 100);
-        path += normalLine(currentX + 150);
-
-        const newPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        newPath.setAttribute("d", path);
-        newPath.setAttribute("class", "heartrate-line");
-        newPath.setAttribute("stroke", "#FF4B6E");
-        newPath.setAttribute("stroke-width", "2");
-        newPath.setAttribute("fill", "none");
-
-        // Clear previous path and append new path
-        while (ecgLines.firstChild) {
-            ecgLines.removeChild(ecgLines.firstChild);
-        }
-        ecgLines.appendChild(newPath);
-
-        currentX += animationSpeed;
-        if (currentX > 0) {
-            currentX = -500;
-        }
-
-        requestAnimationFrame(animateECG);
+  class ECGMonitor {
+    constructor() {
+      this.ecgLines = document.querySelector('.ecg-lines');
+      this.segments = [];
+      this.currentX = 0;
+      this.segmentWidth = 200;
+      this.totalWidth = 500;
+      this.animationFrame = null;
+      this.frequency = 1;
     }
 
-    animateECG();
-
-    
-
-
-    // Vital signs animation
-    function animateVitals() {
-        const bpmElement = document.querySelector('.bpm-number');
-        const systolicElement = document.querySelector('.systolic');
-        const diastolicElement = document.querySelector('.diastolic');
-        const spo2Element = document.querySelector('.spo2-monitor .vital-numbers');
-        const tempElement = document.querySelector('.temp-monitor .vital-numbers');
-
-        function updateValue(element, baseValue, range) {
-            const newValue = baseValue + (Math.random() * range - range/2);
-            element.textContent = Math.round(newValue * 10) / 10;
-        }
-
-        setInterval(() => {
-            updateValue(bpmElement, 82, 4);
-            updateValue(systolicElement, 120, 6);
-            updateValue(diastolicElement, 80, 4);
-            updateValue(spo2Element, 98, 1);
-            updateValue(tempElement, 37.2, 0.2);
-        }, 2000);
+    createInitialSegments() {
+      const numSegments = Math.ceil(this.totalWidth / this.segmentWidth) + 1;
+      this.segments = Array(numSegments).fill(null).map((_, i) => ({
+        id: i,
+        x: i * this.segmentWidth - this.segmentWidth
+      }));
     }
 
-    // Start animations
-    
-    animateVitals();
+    generateECGSegment(startX) {
+      const segment = [];
+      const amplitude = this.frequency;
+      
+      segment.push(`M ${startX} 50`);
+      segment.push(`L ${startX + 10} 50`);
+      segment.push(`C ${startX + 15} ${50 - 5 * amplitude}, ${startX + 20} ${40 - 5 * amplitude}, ${startX + 25} 50`);
+      segment.push(`L ${startX + 35} 50`);
+      segment.push(`L ${startX + 40} ${45 + 5 * amplitude}`);
+      segment.push(`L ${startX + 45} ${20 - 20 * amplitude}`);
+      segment.push(`L ${startX + 50} ${80 + 20 * amplitude}`);
+      segment.push(`L ${startX + 55} 50`);
+      segment.push(`L ${startX + 65} 50`);
+      segment.push(`C ${startX + 75} ${40 + 5 * amplitude}, ${startX + 85} ${40 + 5 * amplitude}, ${startX + 95} 50`);
+      segment.push(`L ${startX + this.segmentWidth} 50`);
+      
+      return segment.join(' ');
+    }
+
+    animate() {
+      this.currentX -= 2 * this.frequency;
+      
+      this.segments = this.segments.map(segment => ({
+        ...segment,
+        x: segment.x - 2 * this.frequency
+      }));
+      
+      if (this.segments[0].x <= -this.segmentWidth) {
+        const lastSegment = this.segments[this.segments.length - 1];
+        this.segments.shift();
+        this.segments.push({
+          id: lastSegment.id + 1,
+          x: lastSegment.x + this.segmentWidth
+        });
+      }
+      
+      while (this.ecgLines.firstChild) {
+        this.ecgLines.removeChild(this.ecgLines.firstChild);
+      }
+      
+      this.segments.forEach(segment => {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", this.generateECGSegment(segment.x));
+        path.setAttribute("class", "heartrate-line");
+        this.ecgLines.appendChild(path);
+      });
+      
+      this.animationFrame = requestAnimationFrame(() => this.animate());
+    }
+
+    setFrequency(freq) {
+      this.frequency = freq;
+    }
+
+    start() {
+      this.createInitialSegments();
+      this.animate();
+    }
+
+    stop() {
+      if (this.animationFrame) {
+        cancelAnimationFrame(this.animationFrame);
+      }
+    }
+  }
+
+  function setupScrollAnimation() {
+    const ecgMonitor = new ECGMonitor();
+    ecgMonitor.start();
+
+    window.addEventListener('scroll', () => {
+      const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+      
+      const bpm = Math.floor(82 + scrollPercent * 100);
+      const systolic = Math.floor(120 + scrollPercent * 100);
+      const diastolic = Math.floor(80 + scrollPercent * 60);
+      const spo2 = Math.floor(98 - scrollPercent * 15);
+      const temp = (37.2 + scrollPercent * 4).toFixed(1);
+
+      document.querySelector('.bpm-number').textContent = bpm;
+      document.querySelector('.systolic').textContent = systolic;
+      document.querySelector('.diastolic').textContent = diastolic;
+      document.querySelector('.spo2-monitor .vital-numbers').textContent = spo2;
+      document.querySelector('.temp-monitor .vital-numbers').textContent = temp;
+
+      ecgMonitor.setFrequency(1 + scrollPercent * 2);
+
+      const monitors = document.querySelectorAll('.monitor-box');
+      monitors.forEach(monitor => {
+        if (scrollPercent > 0.5) {
+          monitor.classList.add('warning');
+        } else {
+          monitor.classList.remove('warning');
+        }
+        
+        if (scrollPercent > 0.8) {
+          monitor.classList.add('critical', 'emergency-flash');
+        } else {
+          monitor.classList.remove('critical', 'emergency-flash');
+        }
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    createGrid();
+    setupScrollAnimation();
+  });
 </script>
