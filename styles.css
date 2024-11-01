@@ -263,142 +263,144 @@ footer {
     position: relative;
 }
 
-.ecg-container {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    width: 300px;
-    height: 100px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 2px solid var(--primary);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.ecg-grid {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-        linear-gradient(to right, rgba(255, 75, 110, 0.2) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 75, 110, 0.2) 1px, transparent 1px);
-    background-size: 20px 20px;
-    pointer-events: none;
-}
-
-.heartrate {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.heartrate-line {
-    stroke: var(--primary);
-    stroke-width: 2;
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 5px var(--primary));
-}
-
 .medical-dashboard {
     position: fixed;
-    bottom: 20px;
-    left: 20px;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%) scale(0.8);
+    transform-origin: top left;
     display: flex;
+    flex-direction: column;
     gap: 10px;
     z-index: 100;
 }
 
-.ecg-container {
-    width: 400px;
-    height: 200px;
-    background: rgba(0, 0, 0, 0.85);
-    border: 2px solid var(--primary);
-    border-radius: 10px;
-    overflow: hidden;
-    padding: 10px;
-}
 
-.monitor-header {
+  .monitor-box {
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid #ff0000;
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 8px;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .ecg-container {
+    width: 200px;
+    height: 120px;
+  }
+
+  .ecg-wrapper {
+    position: relative;
+    height: 80px;
+  }
+
+  .monitor-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: var(--primary);
-    margin-bottom: 5px;
-}
+    color: #ff0000;
+    margin-bottom: 4px;
+  }
 
-.monitor-label {
-    font-size: 14px;
+  .monitor-label {
+    font-size: 12px;
     font-weight: bold;
-}
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  }
 
-.heart-rate {
+  .heart-rate {
     display: flex;
     align-items: baseline;
-    gap: 5px;
-}
+    gap: 4px;
+  }
 
-.bpm-number {
-    font-size: 24px;
+  .bpm-number {
+    font-size: 18px;
     font-weight: bold;
-    color: #FF4B6E;
-    animation: blink 1s infinite;
-}
+    color: #ff0000;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    animation: pulse 1s infinite;
+  }
 
-.bpm-label {
-    font-size: 12px;
-}
+  .bpm-label {
+    font-size: 10px;
+    color: #ff0000;
+  }
 
-.vitals-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+  .heartrate-line {
+    stroke: #ff0000;
+    stroke-width: 1.5;
+    fill: none;
+    filter: url(#glow);
+  }
 
-.vital-box {
-    background: rgba(0, 0, 0, 0.85);
-    border: 2px solid var(--primary);
-    border-radius: 10px;
-    padding: 10px;
-    width: 150px;
-    color: var(--primary);
-}
+  .grid-line {
+    stroke: rgba(255, 0, 0, 0.1);
+    stroke-width: 0.5;
+  }
 
-.vital-label {
-    font-size: 12px;
+  .vital-box {
+    width: 200px;
+    color: #ff0000;
+  }
+
+  .vital-label {
+    font-size: 10px;
     opacity: 0.8;
-}
+  }
 
-.vital-numbers {
-    font-size: 24px;
+  .vital-numbers {
+    font-size: 18px;
     font-weight: bold;
-    margin: 5px 0;
-}
+    margin: 2px 0;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  }
 
-.vital-unit {
-    font-size: 12px;
+  .vital-unit {
+    font-size: 10px;
     opacity: 0.8;
-}
+  }
 
-.bp-monitor .vital-numbers {
+  .bp-monitor .vital-numbers {
     display: flex;
     align-items: center;
-    gap: 5px;
-}
+    gap: 4px;
+  }
 
-.bp-monitor .separator {
-    color: var(--primary);
+  .bp-monitor .separator {
+    color: #ff0000;
     opacity: 0.8;
-}
+  }
 
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { opacity: 1; }
-}
+  .warning {
+    background: rgba(255, 0, 0, 0.1);
+    border-color: #ff3000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  }
+
+  .critical {
+    background: rgba(255, 0, 0, 0.2);
+    border-color: #ff0000;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .emergency-flash {
+    animation: emergency-flash 0.5s infinite;
+  }
+
+  @keyframes emergency-flash {
+    0% { border-color: #ff0000; }
+    50% { border-color: #ff6b6b; }
+    100% { border-color: #ff0000; }
+  }
 
 
 
